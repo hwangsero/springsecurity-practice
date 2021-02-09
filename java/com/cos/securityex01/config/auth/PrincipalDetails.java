@@ -68,7 +68,4 @@ public class PrincipalDetails implements UserDetails{
 		collet.add(()->{ return user.getRole();});
 		return collet;
 	}
-
-
-	
 }
