@@ -3,6 +3,7 @@ package com.cos.securityex01.config;
 import com.cos.securityex01.config.auth.PrincipalDetailsService;
 import com.cos.securityex01.config.jwt.JwtAuthenticationFilter;
 import com.cos.securityex01.config.jwt.JwtAuthorizationFilter;
+import com.cos.securityex01.config.oauth.PrincipalOauth2UserService;
 import com.cos.securityex01.model.User;
 import com.cos.securityex01.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +21,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password	.PasswordEncoder;
 import org.springframework.web.filter.CorsFilter;
+// oauth 로그인
+// 1. 코드받기(인증) 2. 액세스토큰(권한) 3. 사용자 프로필 정보 조회 4. 가져온 정보를 토대로 회원가입을 자동으로 진행시키기도 함
+
 
 @RequiredArgsConstructor
 @Configuration
@@ -29,6 +33,7 @@ import org.springframework.web.filter.CorsFilter;
 // prePostEnabled = true : @PreAuthorize,@PostAuthorize 활성화 => @Secured와 비슷한데 여러개의 권한을 지정하기에 유용하다.
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
+	private final PrincipalOauth2UserService principalOauth2UserService;
 	private final CorsFilter corsFilter;
 	private final UserRepository userRepository;
 	private final ObjectMapper objectMapper;
@@ -64,7 +69,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			.loginPage("/login") // 시큐리티가 낚아채는 로그인페이지가 시큐리티 기본 로그인 페이지가 아니라 직접 로그인 페이지 요청을 지정한다.
 //			.usernameParameter("username2") // principalDetailsService에서 사용될 username의 이름지정
 			.loginProcessingUrl("/sign-in") // login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인을 진행한다.(컨트롤러단에서 '/login'에 대한 처리를 하지 않아도됨)
-				.defaultSuccessUrl("/"); // 로그인 성공했을 때 이동할 경로지정
+				.defaultSuccessUrl("/") // 로그인 성공했을 때 이동할 경로지정
+			.and()
+				.oauth2Login() // oauth 로그인
+				.loginPage("/login")
+				.userInfoEndpoint() // 구글 로그인이 완료된 뒤의 후처리가 필요함.
+				.userService(principalOauth2UserService); // 코드가 아니라 엑세스토큰이랑 사용자 정보를 받아온다.
 	}
 
 //	@Override

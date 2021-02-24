@@ -42,3 +42,15 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
     show-sql: true
     database-platform: org.hibernate.dialect.H2Dialect
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 353254242630-fn0r2ng3boqjrielv6pedh2atn1ahmtv.apps.googleusercontent.com
+            client-secret: xw8QrUtWj2f2Fo04kKbtYEBo
+            scope:
+              - email
+              - profile
+
